@@ -1,0 +1,153 @@
+---
+title: "SUDV Classifiers"
+output: html_notebook
+---
+
+
+
+```{r}
+SUDVimp<-df5[,c('SUDV','EBOV','TAFV','LLOV','BOMBV','RESTm','BDBV','Cat',
+'Cattle','MENV','X0.15','X46.60','X61.up')]
+```
+
+```{r}
+summary(SUDVimp)
+```
+
+```{r}
+library(caret)
+```
+
+```{r}
+#Create train/test split 70/30
+set.seed(1234)
+train <- sample(nrow(SUDVimp), 0.7*nrow(SUDVimp), replace = FALSE)
+TrainSet <- SUDVimp[train,]
+ValidSet <- SUDVimp[-train,]
+summary(TrainSet)
+summary(ValidSet)
+TrainingParameters <- trainControl(method = "repeatedcv", number = 10, repeats=10)
+```
+```{r}
+library(DMwR)
+
+## Smote : Synthetic Minority Oversampling Technique To Handle Class Imbalance In Binary Classification; code below puts it at 1:1 balance
+balanced.data <- SMOTE(SUDV ~., TrainSet, perc.over = 100)
+
+as.data.frame(table(balanced.data$SUDV))
+```
+
+```{r}
+set.seed(1234)
+library(klaR)
+NaiveModel <- train(TrainSet[,-17], TrainSet$SUDV, 
+                    method = "nb",
+                    preProcess=c("scale","center"),
+                    trControl= TrainingParameters,
+                    na.action = na.omit
+)
+
+#Predictions
+NaivePredictions <-predict(NaiveModel, ValidSet, na.action = na.pass)
+cmNaive <-confusionMatrix(NaivePredictions, ValidSet$SUDV)
+```
+
+```{r}
+NaivePredictions <-predict(NaiveModel, ValidSet, na.action = na.pass)
+```
+
+```{r}
+cmNaive <-confusionMatrix(NaivePredictions, ValidSet$SUDV)
+```
+
+```{r}
+cmNaive
+```
+
+```{r}
+library(pROC)
+#Calculate ROC curve
+rocCurve.nb<- roc(ValidSet$SUDV,as.numeric(NaivePredictions))
+```
+
+```{r}
+plot(rocCurve.nb,col=c(1))
+```
+
+```{r}
+auc(rocCurve.nb)
+```
+
+```{r}
+set.seed(1234)
+NNModel <- train(TrainSet[,-17], TrainSet$SUDV,
+                  method = "nnet",
+                  trControl= TrainingParameters,
+                  preProcess=c("scale","center"),
+                  na.action = na.omit)
+```
+```{r}
+NNPredictions <-predict(NNModel, ValidSet)
+# Create confusion matrix
+cmNN <-confusionMatrix(NNPredictions, ValidSet$SUDV)
+```
+
+```{r}
+cmNN
+```
+
+```{r}
+library(pROC)
+#Calculate ROC curve
+rocCurve.nn<- roc(ValidSet$SUDV,as.numeric(NNPredictions))
+```
+
+```{r}
+#plot the ROC curve
+plot(rocCurve.nn,col=c(1))
+```
+
+```{r}
+auc(rocCurve.nn)
+```
+
+```{r}
+set.seed(1234)
+library(caret)
+library(C50)
+```
+
+```{r}
+# Train a model with above parameters. We will use C5.0 algorithm
+DecTreeModel <- train(SUDV ~ ., data = TrainSet, 
+                      method = "C5.0",
+                      preProcess=c("scale","center"),
+                      trControl= TrainingParameters,
+                      na.action = na.omit)
+```
+```{r}
+#Predictions
+DTPredictions <-predict(DecTreeModel, ValidSet, na.action = na.pass)
+# Print confusion matrix and results
+cmTree <-confusionMatrix(DTPredictions, ValidSet$SUDV)
+```
+
+```{r}
+cmTree
+```
+
+```{r}
+library(pROC)
+#Calculate ROC curve
+rocCurve.dt<- roc(ValidSet$SUDV,as.numeric(DTPredictions))
+```
+
+```{r}
+#plot the ROC curve
+plot(rocCurve.dt,col=c(1))
+```
+
+```{r}
+auc(rocCurve.dt)
+```
+
