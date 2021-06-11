@@ -1,0 +1,77 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+
+```{r}
+summary(df5)
+```
+```{r}
+LLOVimp<-df5[,c('LLOV','BOMBV','TAFV','SUDV','RESTm','BDBV','EBOV','MENV',
+             'Pig','Duck','Cattle','Village','Dog','Cat')]
+
+
+```
+
+```{r}
+library(caret)
+```
+```{r}
+#Create train/test split 70/30
+set.seed(1234)
+train <- sample(nrow(LLOVimp), 0.7*nrow(LLOVimp), replace = FALSE)
+TrainSet <- LLOVimp[train,]
+ValidSet <- LLOVimp[-train,]
+summary(TrainSet)
+summary(ValidSet)
+TrainingParameters <- trainControl(method = "repeatedcv", number = 10, repeats=10,
+                                   classProbs = TRUE,
+                                   summaryFunction=twoClassSummary)
+```
+```{r}
+library(DMwR)
+## Smote : Synthetic Minority Oversampling Technique To Handle Class Imbalance In Binary Classification; code below puts it at 1:1 balance
+balanced.data <- SMOTE(LLOV ~., TrainSet, perc.over = 100)
+
+as.data.frame(table(balanced.data$LLOV))
+```
+
+```{r}
+set.seed(1234)
+
+# Train a model with above parameters. We will use rpart algorithm
+DecTreeModel <- train(LLOV ~ ., data = TrainSet, 
+                      method = "rpart2",
+                      tuneLength=6,
+                      trControl= TrainingParameters,
+                      metric="ROC")
+```
+
+
+```{r}
+DecTreeModel
+```
+```{r}
+#Predictions
+DTPredictions <-predict(DecTreeModel, ValidSet, na.action = na.pass)
+# Print confusion matrix and results
+cmTree <-confusionMatrix(DTPredictions, ValidSet$LLOV)
+```
+
+```{r}
+cmTree
+```
+```{r}
+library(pROC)
+#Calculate ROC curve
+rocCurve.dt<- roc(ValidSet$LLOV,as.numeric(DTPredictions))
+```
+```{r}
+plot(rocCurve.dt, col=c(1))
+```
+```{r}
+auc(rocCurve.dt)
+```
+
