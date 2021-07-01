@@ -1,0 +1,86 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+
+```{r}
+summary(df5)
+```
+```{r}
+MENVimp<-df5[, c('MENV', 'GHV','TAFV', 'CEDV',
+'HEV','BDBV','Household.Size.46.to.60','Pig','RESTm','Village')]
+```
+
+```{r}
+library(caret)
+```
+
+```{r}
+#Create train/test split 70/30
+set.seed(1234)
+train <- sample(nrow(MENVimp), 0.7*nrow(MENVimp), replace = FALSE)
+TrainSet <- MENVimp[train,]
+ValidSet <- MENVimp[-train,]
+summary(TrainSet)
+summary(ValidSet)
+```
+```{r}
+library(DMwR)
+
+## Smote : Synthetic Minority Oversampling Technique To Handle Class Imbalance In Binary Classification; code below puts it at 1:1 balance
+balanced.data <- SMOTE(MENV ~., TrainSet, perc.over = 100)
+
+as.data.frame(table(balanced.data$MENV))
+```
+```{r}
+#Train a neural network (nnet) using Caret you need to specify two #hyper-parameters: size and decay. Size is the number of units in hidden #layer (nnet fit a single hidden layer neural network) and decay is the #regularization parameter to avoid over-fitting. Keep in mind that for each #R package the name of the hyper-parameters can change. This prevents overfitting as opposed to the previous code.
+set.seed(1234)
+fitControl <- trainControl(method = "repeatedcv", 
+                           number = 10, 
+                           repeats = 5, 
+                           classProbs = TRUE, 
+                           summaryFunction = twoClassSummary)
+
+nnetGrid <-  expand.grid(size = seq(from = 1, to = 10, by = 1),
+                        decay = seq(from = 0.1, to = 0.5, by = 0.1))
+
+NNModel <- train(MENV ~ ., 
+                 data = TrainSet[, ],
+                 method = "nnet",
+                 metric = "ROC",
+                 trControl = fitControl,
+                 preProcess = c('center','scale'),
+                 tuneGrid = nnetGrid,
+                 trace = FALSE,
+                 maxit = 500,
+                 verbose=FALSE)
+```
+```{r}
+NNModel
+```
+```{r}
+NNPredictions <-predict(NNModel, ValidSet)
+# Create confusion matrix
+cmNN <-confusionMatrix(NNPredictions, ValidSet$MENV)
+```
+
+```{r}
+cmNN
+```
+
+```{r}
+library(pROC)
+#Calculate ROC curve
+rocCurve.nn<- roc(ValidSet$MENV,as.numeric(NNPredictions))
+```
+
+```{r}
+#plot the ROC curve
+plot(rocCurve.nn,col=c(1))
+```
+```{r}
+auc(rocCurve.nn)
+```
+
