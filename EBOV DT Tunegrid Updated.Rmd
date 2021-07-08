@@ -10,8 +10,8 @@ summary(df5)
 ```
 ```{r}
 EBOVimp<-df5[, c('EBOV','TAFV','BOMBV',
-'SUDV','BDBV','Village','Pig','Household.Size.46.to.60','LLOV','Cat','Duck',
-'Household.Size.61.and.up','RESTm')]
+'SUDV','BDBV','Village','Pig','HH.46.to.60','LLOV','Cat','Duck',
+'HH.61.and.up','RESTm')]
 
 
 ```

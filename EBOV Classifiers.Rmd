@@ -6,9 +6,9 @@ output: html_notebook
 
 
 ```{r}
-EBOVimp<-df5[, c('EBOV','SUDV','Pig','Household.Size.46.to.60','Cat',
-                 'Household.Size.61.and.up','BDBV','Village','Duck',
-                 'TAFV','LLOV','BOMBV','RESTm')]
+EBOVimp<-df5[, c('EBOV','TAFV','BOMBV',
+'SUDV','BDBV','Village','Pig','HH.46.to.60','LLOV','Cat','Duck',
+'HH.61.and.up','RESTm')]
 ```
 
 ```{r}
