@@ -7,8 +7,7 @@ output: html_notebook
 
 ```{r}
 SUDVimp<-df5[,c('SUDV','EBOV','TAFV','LLOV','BOMBV','RESTm','BDBV','Cat',
-'Cattle','MENV','Household.Size.0.to.15','Household.Size.46.to.60',
-'Household.Size.61.and.up')]
+'Cattle','MENV','MLAV','HowLongAtWork', 'HH.0.to.15')]
 ```
 
 ```{r}

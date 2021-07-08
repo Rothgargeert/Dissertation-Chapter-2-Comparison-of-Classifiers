@@ -10,7 +10,8 @@ summary(df5)
 ```
 
 ```{r}
-MOJVimp<-df5[, c('MENV', 'Pig','Village','Duck','Cat','GHV','MOJV')]
+MOJVimp<-df5[, c('MENV', 'Pig','Duck','Cat','GHV','MOJV', 'EBOV', 
+                 'LLOV', 'Cattle')]
 ```
 ```{r}
 library(caret)

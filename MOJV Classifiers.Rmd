@@ -4,8 +4,8 @@ output: html_notebook
 ---
 
 ```{r}
-MOJVimp<-df5[, c('MOJV', 'GHV',
-'Village','Pig','MENV','Cat','Duck')]
+MOJVimp<-df5[, c('MENV', 'Pig','Duck','Cat','GHV','MOJV', 'EBOV', 
+                 'LLOV', 'Cattle')]
 ```
 
 

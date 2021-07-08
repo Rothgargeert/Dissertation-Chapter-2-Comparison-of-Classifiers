@@ -7,7 +7,7 @@ output: html_notebook
 
 ```{r}
 MENVimp<-df5[, c('MENV', 'GHV','TAFV', 'CEDV',
-'HEV','BDBV','Household.Size.46.to.60','Pig','RESTm','Village')]
+'HEV','BDBV','HH.46.to.60','Pig','RESTm','Village','Duck','Cat')]
 ```
 
 ```{r}
