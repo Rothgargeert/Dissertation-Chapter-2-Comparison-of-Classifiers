@@ -6,10 +6,10 @@ output: html_notebook
 
 
 ```{r}
-GHVimp<-df5[, c('GHV','MENV','HEV','CEDV','Village','Duck','Pig',
-                'Household.Size.46.to.60','Cat','BDBV','WildContact','TAFV',
+GHVimp<-df5[, c('GHV','MENV','HEV','CEDV','Duck','Pig',
+                'HH.46.to.60','Cat','BDBV','WildContact','Dog',
                 'Cattle',
-                'Household.Size.61.and.up')]
+                'Parts.Disposed')]
 ```
 
 ```{r}

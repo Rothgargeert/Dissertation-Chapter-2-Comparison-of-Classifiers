@@ -4,15 +4,12 @@ output: html_notebook
 ---
 
 
-```{r}
-df5$LLOV <- relevel(df5$LLOV, ref = "Positive")
-levels(df5$LLOV)
-```
+
 
 
 ```{r}
 LLOVimp<-df5[,c('LLOV','BOMBV','TAFV','SUDV','RESTm','BDBV','EBOV','MENV',
-             'Pig','Duck','Cattle','Village','Dog','Cat')]
+             'Pig','Duck','Cattle','Village','Dog','Cat', 'Chicken')]
 ```
 
 
