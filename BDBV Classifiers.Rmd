@@ -10,8 +10,8 @@ summary(df5)
 ```
 
 ```{r}
-BDBVimp<-df5[, c('TAFV', 'EBOV',
-'SUDV','BDBV','Village','Pig','MENV','LLOV','Cat','Duck')]
+BDBVimp<-df5[, c('BDBV','TAFV', 'EBOV',
+'SUDV','BOMBV','Village','Pig','MENV','LLOV','Cat','Duck', 'RESTm')]
 ```
 ```{r}
 library(caret)
